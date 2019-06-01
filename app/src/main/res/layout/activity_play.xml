@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/game_play_background"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <include layout="@layout/actionbar_common" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/img_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="210dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/cattuong" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/picture_border" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:id="@+id/anwser1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:orientation="horizontal"></LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:id="@+id/anwser2"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal"></LinearLayout>
+
+
+
+        <Button
+            android:visibility="invisible"
+            android:id="@+id/btn_tiep"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:background="@drawable/game_continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:id="@+id/ln_3"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:orientation="horizontal"></LinearLayout>
+
+        <LinearLayout
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:id="@+id/ln_4"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal"></LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
