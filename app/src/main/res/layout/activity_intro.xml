@@ -6,19 +6,15 @@
     android:layout_height="match_parent"
     android:background="@drawable/main_bg"
     android:orientation="vertical"
-    android:gravity="center|bottom"
+    android:gravity="center"
     android:paddingBottom="100dp"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:src="@drawable/btn_dang_nhap"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <ImageView
-        android:id="@+id/iv_choi_thu"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/btn_choi_thu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <ProgressBar
+        android:layout_marginTop="300dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        />
 
 </LinearLayout>

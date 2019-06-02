@@ -12,13 +12,13 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:gravity="center">
 
         <ImageView
-            android:id="@+id/img_picture"
-            android:layout_width="wrap_content"
-            android:layout_height="210dp"
+            android:id="@+id/iv_picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:src="@drawable/cattuong" />
 
@@ -31,31 +31,38 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="10dp">
 
         <LinearLayout
-            android:layout_weight="1"
-            android:id="@+id/anwser1"
+            android:layout_weight="1.25"
+            android:id="@+id/anwser0"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="0dp"
             android:gravity="center"
             android:orientation="horizontal"></LinearLayout>
 
         <LinearLayout
-            android:layout_weight="1"
+            android:layout_weight="1.2"
+            android:id="@+id/anwser1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:orientation="horizontal"></LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="1.2"
             android:id="@+id/anwser2"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
+            android:layout_height="0dp"
+            android:gravity="center|top"
             android:orientation="horizontal"></LinearLayout>
 
 
 
         <Button
-            android:visibility="invisible"
+            android:visibility="gone"
             android:id="@+id/btn_tiep"
             android:layout_marginTop="10dp"
             android:layout_gravity="center"
@@ -65,23 +72,28 @@
             android:layout_marginBottom="10dp"/>
 
         <LinearLayout
+            android:layout_marginTop="25dp"
             android:layout_gravity="bottom"
             android:layout_weight="1"
-            android:id="@+id/ln_3"
+            android:id="@+id/plan1"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="0dp"
             android:gravity="center"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal">
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_gravity="bottom"
             android:layout_weight="1"
-            android:id="@+id/ln_4"
+            android:id="@+id/plan2"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
+            android:layout_height="0dp"
             android:gravity="center"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal"
+            >
+
+        </LinearLayout>
 
     </LinearLayout>
 

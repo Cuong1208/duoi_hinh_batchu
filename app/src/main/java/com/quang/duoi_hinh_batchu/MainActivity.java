@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
@@ -18,7 +19,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
+
         findViewById(R.id.iv_choi_thu).setOnClickListener(this);
+
+
+
     }
 
     @Override
