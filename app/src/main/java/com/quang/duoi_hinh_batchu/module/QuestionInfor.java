@@ -10,6 +10,7 @@ public class QuestionInfor {
     private int id;
     private String suggest;
     private ArrayList<String> shortAnswer;
+    private String kq;
 
     public QuestionInfor(String[] str) {
         fullAnswer = new ArrayList<>(Arrays.asList(str[0].split(":")[1].split(",")));
@@ -18,10 +19,15 @@ public class QuestionInfor {
         id = Integer.parseInt(str[3].split(":")[1]);
         suggest = str[4].split(":")[1];
         shortAnswer = new ArrayList<>(Arrays.asList(str[5].split(":")[1].split(",")));
+        kq = str[5].split(":")[1].replace(",","");
     }
 
     public ArrayList<String> getFullAnswer() {
         return fullAnswer;
+    }
+
+    public String getKq() {
+        return kq;
     }
 
     public String getImagePath() {

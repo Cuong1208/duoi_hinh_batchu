@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.quang.duoi_hinh_batchu.module.AppData;
@@ -23,7 +24,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private static final String chars = "ABCDEGHIKLMNOPQRSTUVXY";
     private static final String TAG = "TAG";
     Random random = new Random();
-
     private Typeface mTypeface;
 
     private ImageView mIvPicture;
@@ -32,7 +32,11 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout mPlan1;
     private LinearLayout mPlan2;
     private String dapan = "";
-
+    private Button btnNext;
+    String kq = "";
+    int size;
+    int heart = 5;
+    private TextView tvHeart;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +54,12 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         mAnswer2 = findViewById(R.id.anwser2);
         mPlan1 = findViewById(R.id.plan1);
         mPlan2 = findViewById(R.id.plan2);
+        btnNext = findViewById(R.id.btn_tiep);
+        tvHeart = findViewById(R.id.txt_heart);
+        btnNext.setOnClickListener(this);
+        tvHeart.setText(String.valueOf(heart));
         showInfor();
+
     }
 
     private void showInfor() {
@@ -59,7 +68,10 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             appData.toNextQuestion();
             mIvPicture.setImageDrawable(appData.getImageDrawable());
             ArrayList<String> answer = appData.getShortAnswer();
-            int size = answer.size();
+
+            kq = appData.getKQ();
+            size = answer.size();
+
             showAnswer(size);
             // Thêm các ký tự trong 16 ký tự
             for (int i = 0; i < MAX_KYTU - size; i++) {
@@ -82,45 +94,48 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             final Button button = new Button(this);
             button.setBackgroundResource(R.drawable.tile_empty);
             button.setText("");
-
             button.setId(i);
-
             button.setTypeface(mTypeface);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 135);
             button.setLayoutParams(params);
+
             if (i < 8) {
                 mAnswer1.addView(button);
-                setvisible(button);
+                setvisible(button,mAnswer1);
             } else {
                 mAnswer2.addView(button);
-                setvisible(button);
+                setvisible(button,mAnswer2);
             }
         }
     }
 
-    private Button setvisible(final Button button) {
+    private Button setvisible(final Button button,final LinearLayout mAnswer) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (button.getText() != "") {
                     String bt = (String) button.getText();
                     button.setText("");
+
+                    for (int i = 0; i < mAnswer.getChildCount(); i++) {
+                        Button button1 = (Button) mAnswer.getChildAt(i);
+                        button1.setBackgroundResource(R.drawable.tile_empty);
+                    }
+                    //
                     for (int i = 0; i < mPlan1.getChildCount(); i++) {
-                        Button button1 = (Button) mPlan1.getChildAt(i
-                        );
+                        Button button1 = (Button) mPlan1.getChildAt(i);
                         findViewById(button1.getId());
+
                         if (bt == button1.getText()) {
                             button1.setVisibility(View.VISIBLE);
-                            Log.i(TAG, "childAt 1 : " + button.getId());
                         }
                     }
+
                     for (int i = 0; i < mPlan2.getChildCount(); i++) {
                         Button button1 = (Button) mPlan2.getChildAt(i);
-                        findViewById(button1.getId());
                         if (bt == button1.getText()) {
                             button1.setVisibility(View.VISIBLE);
                         }
-                        Log.i(TAG, "childAt 2 : " + button.getId());
                     }
                 }
             }
@@ -145,7 +160,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             if (i < 8) {
                 mPlan1.addView(button);
                 setinvisible(button);
-
             } else {
                 mPlan2.addView(button);
                 setinvisible(button);
@@ -157,14 +171,17 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String da = "";
                 for (int i = 0; i < mAnswer1.getChildCount(); i++) {
                     Button button1 = (Button) mAnswer1.getChildAt(i);
                     if (button1.getText() == "") {
                         dapan = button.getText().toString();
                         button1.setText(dapan);
                         button.setVisibility(View.INVISIBLE);
+                        checkAnswer(da,mAnswer1);
                         return;
                     }
+
                 }
                 for (int i = 0; i < mAnswer2.getChildCount(); i++) {
                     Button button1 = (Button) mAnswer2.getChildAt(i);
@@ -172,18 +189,60 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                         dapan = button.getText().toString();
                         button1.setText(dapan);
                         button.setVisibility(View.INVISIBLE);
+                        checkAnswer(da,mAnswer2);
                         return;
                     }
+
                 }
             }
         });
         return button;
     }
 
+    private void checkAnswer(String da,LinearLayout mAnswer) {
+        //lay dap an
+        for (int k = 0; k < mAnswer.getChildCount(); k++){
+                Button btn = (Button) mAnswer.getChildAt(k);
+                String text = btn.getText().toString();
+                if (text != "") {
+                    da += text;
+                }
+        }
+        //check KQ
+        if (da.length() == size) {
+            if (da.equals(kq)) {
+                Toast.makeText(this, "Thiên tài!!!", Toast.LENGTH_SHORT).show();
+                btnNext.setVisibility(View.VISIBLE);
+            } else {
+                Toast.makeText(this, "Bạn đã trả lời sai!", Toast.LENGTH_SHORT).show();
+//                mAnswer2.setBackgroundResource(R.drawable.tile_false);
+                for (int i = 0; i < mAnswer.getChildCount(); i++) {
+                    Button button1 = (Button) mAnswer.getChildAt(i);
+                    button1.setBackgroundResource(R.drawable.tile_false);
+                }
+                heart --;
+                tvHeart.setText(String.valueOf(heart));
+                if(heart == 0){
+                    Toast.makeText(this, "Game Over", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    private void newQuestion(){
+        mAnswer1.removeAllViews();
+        mAnswer2.removeAllViews();
+        mPlan1.removeAllViews();
+        mPlan2.removeAllViews();
+        btnNext.setVisibility(View.GONE);
+        showInfor();
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_tiep:
+                newQuestion();
                 break;
             case R.id.iv_back:
                 onBackPressed();

@@ -81,6 +81,10 @@ public class AppData implements IAppData {
     }
 
     @Override
+    public String getKQ() {
+        return questionInfor.getKq();
+    }
+    @Override
     public ArrayList<String> getShortAnswer() {
         return questionInfor.getShortAnswer();
     }

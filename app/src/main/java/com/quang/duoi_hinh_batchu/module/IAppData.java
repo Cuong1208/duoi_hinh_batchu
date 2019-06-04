@@ -17,6 +17,8 @@ public interface IAppData {
 
     String getSuggest();
 
+    String getKQ();
+
     ArrayList<String> getShortAnswer();
 
     ArrayList<String> getSelectedCharacter();

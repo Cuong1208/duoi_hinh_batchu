@@ -36,12 +36,12 @@
         android:padding="10dp">
 
         <LinearLayout
+            android:layout_weight="1.25"
             android:id="@+id/anwser0"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.25"
             android:gravity="center"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"></LinearLayout>
 
         <LinearLayout
             android:id="@+id/anwser1"
@@ -49,47 +49,51 @@
             android:layout_height="0dp"
             android:layout_weight="1.2"
             android:gravity="center"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"></LinearLayout>
 
         <LinearLayout
+            android:layout_weight="1.2"
             android:id="@+id/anwser2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.2"
             android:gravity="center|top"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"></LinearLayout>
+
 
 
         <Button
+            android:visibility="gone"
             android:id="@+id/btn_tiep"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:background="@drawable/game_continue_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/game_continue_button"
-            android:visibility="gone" />
+            android:layout_marginBottom="10dp"/>
 
         <LinearLayout
+            android:layout_marginTop="25dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
             android:id="@+id/plan1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="25dp"
-            android:layout_weight="1"
             android:gravity="center"
             android:orientation="horizontal">
 
         </LinearLayout>
 
         <LinearLayout
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
             android:id="@+id/plan2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_gravity="bottom"
-            android:layout_weight="1"
             android:gravity="center"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            >
+
+        </LinearLayout>
 
     </LinearLayout>
 
