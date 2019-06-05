@@ -1,9 +1,11 @@
 package com.quang.duoi_hinh_batchu;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -12,6 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.quang.duoi_hinh_batchu.dialog.AnswerDialog;
+import com.quang.duoi_hinh_batchu.dialog.ItemDialog;
+import com.quang.duoi_hinh_batchu.dialog.SupportDialog;
+import com.quang.duoi_hinh_batchu.dialog.UserDialog;
 import com.quang.duoi_hinh_batchu.module.AppData;
 
 import java.util.ArrayList;
@@ -23,26 +29,50 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private static final int MAX_KYTU = 16;
     private static final String chars = "ABCDEGHIKLMNOPQRSTUVXY";
     private static final String TAG = "TAG";
+
+    private static final int LEVEL_MUSIC_ON = 0;
+    private static final int LEVEL_MUSIC_OFF = 1;
+    private static final String SHARED_PREFERENCES_COIN = "SHARED_PREFERENCES_COIN";
+
     Random random = new Random();
+    private String kq = "";
+    private int size;
+    private int level;
+    private int heart = 5;
+    private int numberAnswer = 0;
+    private int point = 0;
+    private String dapan = "";
+    private Button mBtnNext;
     private Typeface mTypeface;
 
-    private ImageView mIvPicture;
-    private LinearLayout mAnswer1;
-    private LinearLayout mAnswer2;
-    private LinearLayout mPlan1;
-    private LinearLayout mPlan2;
-    private String dapan = "";
-    private Button btnNext;
-    String kq = "";
-    int size;
-    int heart = 5;
-    private TextView tvHeart;
+    private ImageView mIvMusic, mIvPicture;
+    private LinearLayout mAnswer1, mAnswer2, mPlan1, mPlan2;
+    private TextView mTvHeart, mTvNumberAnswer, mTvPoint;
+
+    SharedPreferences sharedPreferences ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
         mTypeface = Typeface.createFromAsset(getAssets(), "fonts/UTM_Cookies_0.ttf");
         initView();
+        fullScreen();
+        ring();
+    }
+
+    private void ring() {
+        MediaPlayer ring = MediaPlayer.create(PlayActivity.this, R.raw.ring);
+            ring.start();
+    }
+
+    private void setIvMusic() {
+        level = mIvMusic.getDrawable().getLevel();
+        mIvMusic.setImageLevel(level == LEVEL_MUSIC_ON
+                ? LEVEL_MUSIC_OFF : LEVEL_MUSIC_ON);
+    }
+
+    private void fullScreen() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
@@ -54,10 +84,29 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         mAnswer2 = findViewById(R.id.anwser2);
         mPlan1 = findViewById(R.id.plan1);
         mPlan2 = findViewById(R.id.plan2);
-        btnNext = findViewById(R.id.btn_tiep);
-        tvHeart = findViewById(R.id.txt_heart);
-        btnNext.setOnClickListener(this);
-        tvHeart.setText(String.valueOf(heart));
+
+        mBtnNext = findViewById(R.id.btn_tiep);
+        mBtnNext.setOnClickListener(this);
+
+        mTvHeart = findViewById(R.id.txt_heart);
+        mTvHeart.setText(String.valueOf(heart));
+
+        mTvPoint = findViewById(R.id.txt_point);
+        findViewById(R.id.txt_point).setOnClickListener(this);
+
+        mTvNumberAnswer = findViewById(R.id.tv_numberAnswer);
+
+        mIvMusic = findViewById(R.id.iv_music);
+        findViewById(R.id.iv_music).setOnClickListener(this);
+
+        findViewById(R.id.btn_tiep).setOnClickListener(this);
+        findViewById(R.id.fm_user).setOnClickListener(this);
+        findViewById(R.id.txt_heart).setOnClickListener(this);
+        findViewById(R.id.txt_suggest).setOnClickListener(this);
+
+        sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_COIN, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        mLvDrawable = (LevelListDrawable) mIvMusic.getDrawable();
         showInfor();
 
     }
@@ -68,10 +117,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             appData.toNextQuestion();
             mIvPicture.setImageDrawable(appData.getImageDrawable());
             ArrayList<String> answer = appData.getShortAnswer();
-
             kq = appData.getKQ();
             size = answer.size();
-
             showAnswer(size);
             // Thêm các ký tự trong 16 ký tự
             for (int i = 0; i < MAX_KYTU - size; i++) {
@@ -89,7 +136,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showAnswer(int size) {
-
         for (int i = 0; i < size; i++) {
             final Button button = new Button(this);
             button.setBackgroundResource(R.drawable.tile_empty);
@@ -101,15 +147,15 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
             if (i < 8) {
                 mAnswer1.addView(button);
-                setvisible(button,mAnswer1);
+                setvisible(button, mAnswer1);
             } else {
                 mAnswer2.addView(button);
-                setvisible(button,mAnswer2);
+                setvisible(button, mAnswer2);
             }
         }
     }
 
-    private Button setvisible(final Button button,final LinearLayout mAnswer) {
+    private Button setvisible(final Button button, final LinearLayout mAnswer) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,7 +167,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                         Button button1 = (Button) mAnswer.getChildAt(i);
                         button1.setBackgroundResource(R.drawable.tile_empty);
                     }
-                    //
                     for (int i = 0; i < mPlan1.getChildCount(); i++) {
                         Button button1 = (Button) mPlan1.getChildAt(i);
                         findViewById(button1.getId());
@@ -178,7 +223,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                         dapan = button.getText().toString();
                         button1.setText(dapan);
                         button.setVisibility(View.INVISIBLE);
-                        checkAnswer(da,mAnswer1);
+                        checkAnswer(da, mAnswer1);
                         return;
                     }
 
@@ -189,7 +234,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                         dapan = button.getText().toString();
                         button1.setText(dapan);
                         button.setVisibility(View.INVISIBLE);
-                        checkAnswer(da,mAnswer2);
+                        checkAnswer(da, mAnswer2);
                         return;
                     }
 
@@ -199,50 +244,75 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         return button;
     }
 
-    private void checkAnswer(String da,LinearLayout mAnswer) {
+    private void checkAnswer(String da, LinearLayout answer) {
         //lay dap an
-        for (int k = 0; k < mAnswer.getChildCount(); k++){
-                Button btn = (Button) mAnswer.getChildAt(k);
-                String text = btn.getText().toString();
-                if (text != "") {
-                    da += text;
-                }
+        for (int k = 0; k < answer.getChildCount(); k++) {
+            Button btn = (Button) answer.getChildAt(k);
+            String text = btn.getText().toString();
+            if (text != "") {
+                da += text;
+            }
         }
         //check KQ
         if (da.length() == size) {
             if (da.equals(kq)) {
                 Toast.makeText(this, "Thiên tài!!!", Toast.LENGTH_SHORT).show();
-                btnNext.setVisibility(View.VISIBLE);
+                numberAnswer++;
+                point += 100;
+
+
+                mTvNumberAnswer.setText(String.valueOf(numberAnswer));
+                mTvPoint.setText(String.valueOf(point));
+                mBtnNext.setVisibility(View.VISIBLE);
             } else {
                 Toast.makeText(this, "Bạn đã trả lời sai!", Toast.LENGTH_SHORT).show();
-//                mAnswer2.setBackgroundResource(R.drawable.tile_false);
-                for (int i = 0; i < mAnswer.getChildCount(); i++) {
-                    Button button1 = (Button) mAnswer.getChildAt(i);
+                for (int i = 0; i < answer.getChildCount(); i++) {
+                    Button button1 = (Button) answer.getChildAt(i);
                     button1.setBackgroundResource(R.drawable.tile_false);
                 }
-                heart --;
-                tvHeart.setText(String.valueOf(heart));
-                if(heart == 0){
+                heart--;
+                mTvHeart.setText(String.valueOf(heart));
+                if (heart == 0) {
                     Toast.makeText(this, "Game Over", Toast.LENGTH_SHORT).show();
                 }
             }
         }
     }
 
-    private void newQuestion(){
+    private void newQuestion() {
         mAnswer1.removeAllViews();
         mAnswer2.removeAllViews();
         mPlan1.removeAllViews();
         mPlan2.removeAllViews();
-        btnNext.setVisibility(View.GONE);
+        mBtnNext.setVisibility(View.GONE);
         showInfor();
     }
+
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_tiep:
                 newQuestion();
+                break;
+            case R.id.fm_user:
+                UserDialog userDialog = new UserDialog(this);
+                userDialog.show();
+                break;
+            case R.id.txt_heart:
+                AnswerDialog answerDialog = new AnswerDialog(this);
+                answerDialog.show();
+                break;
+            case R.id.txt_suggest:
+                SupportDialog supportDialog = new SupportDialog(this);
+                supportDialog.show();
+                break;
+            case R.id.txt_point:
+                ItemDialog itemDialog = new ItemDialog(this);
+                itemDialog.show();
+                break;
+            case R.id.iv_music:
+                setIvMusic();
                 break;
             case R.id.iv_back:
                 onBackPressed();
