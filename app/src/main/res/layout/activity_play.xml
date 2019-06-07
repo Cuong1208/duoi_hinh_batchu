@@ -44,20 +44,30 @@
             android:orientation="horizontal"></LinearLayout>
 
         <LinearLayout
-            android:id="@+id/anwser1"
+            android:id="@+id/anwser"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.2"
-            android:gravity="center"
-            android:orientation="horizontal"></LinearLayout>
+            android:layout_weight="2.4"
+            android:orientation="vertical"
+            >
 
-        <LinearLayout
-            android:layout_weight="1.2"
-            android:id="@+id/anwser2"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:gravity="center|top"
-            android:orientation="horizontal"></LinearLayout>
+            <LinearLayout
+                android:id="@+id/anwser1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.2"
+                android:gravity="center"
+                android:orientation="horizontal"></LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/anwser2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.2"
+                android:gravity="center|top"
+                android:orientation="horizontal"></LinearLayout>
+
+        </LinearLayout>
 
 
 

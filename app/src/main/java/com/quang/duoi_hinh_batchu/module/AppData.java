@@ -13,8 +13,8 @@ import java.util.Random;
 public class AppData implements IAppData {
     private static final String QUESTION_PATH = "data/question.txt";
     private Context context;
-    private static String[] questionData;
-    private static int questionNumber = -1;
+    public static String[] questionData;
+    public static int questionNumber = -1;
     private QuestionInfor questionInfor;
 
     public AppData(Context context) throws Exception {
@@ -40,6 +40,7 @@ public class AppData implements IAppData {
         // save question data
         questionData = buf.toString().split("\n\n");
     }
+
 
     @Override
     public void toNextQuestion() {
