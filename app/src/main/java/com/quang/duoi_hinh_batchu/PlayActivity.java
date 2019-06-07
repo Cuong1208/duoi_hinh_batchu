@@ -50,7 +50,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout mAnswer1, mAnswer2, mPlan1, mPlan2,mAnswer;
     private TextView mTvHeart, mTvNumberAnswer, mTvPoint;
 
-    private int state_play;
+//    private int state_play;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +83,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         if(spState!=null){
             int state = spState.getInt("state",0);
             AppData.questionNumber = state-1;
-            numberAnswer = state;
+            numberAnswer = state+1;
         }
 
         findViewById(R.id.iv_back).setOnClickListener(this);
@@ -279,7 +279,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }else {
-            Toast.makeText(this, "AS2", Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "AS2", Toast.LENGTH_LONG).show();
             for (int k = 0; k < mAnswer1.getChildCount(); k++) {
                 Button btn = (Button) mAnswer1.getChildAt(k);
                 String text = btn.getText().toString();
