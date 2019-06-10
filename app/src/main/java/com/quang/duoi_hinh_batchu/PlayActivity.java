@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -26,15 +27,12 @@ import java.util.Random;
 
 public class PlayActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static final String SHARED_PREFERENCES_STATE = "SHARED_PREFERENCES_STATE";
     private static final int MAX_KYTU = 16;
     private static final String chars = "ABCDEGHIKLMNOPQRSTUVXY";
     private static final String TAG = "TAG";
-
     private static final int LEVEL_MUSIC_ON = 0;
     private static final int LEVEL_MUSIC_OFF = 1;
-    public static final String SHARED_PREFERENCES_COIN = "SHARED_PREFERENCES_COIN";
-    public static final String SHARED_PREFERENCES_STATE = "SHARED_PREFERENCES_STATE";
-
     Random random = new Random();
     private String kq = "";
     private int size;
@@ -45,12 +43,12 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private String dapan = "";
     private Button mBtnNext;
     private Typeface mTypeface;
+    private String suggest;
 
     private ImageView mIvMusic, mIvPicture;
-    private LinearLayout mAnswer1, mAnswer2, mPlan1, mPlan2,mAnswer;
+    private LinearLayout mAnswer1, mAnswer2, mPlan1, mPlan2, mAnswer;
     private TextView mTvHeart, mTvNumberAnswer, mTvPoint;
-
-//    private int state_play;
+    private TextView mTvSuppost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +62,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     private void ring() {
         MediaPlayer ring = MediaPlayer.create(PlayActivity.this, R.raw.ring);
-            ring.start();
+        ring.start();
     }
 
     private void setIvMusic() {
@@ -80,10 +78,10 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
         SharedPreferences spState = getSharedPreferences(SHARED_PREFERENCES_STATE, Context.MODE_PRIVATE);
-        if(spState!=null){
-            int state = spState.getInt("state",0);
-            AppData.questionNumber = state-1;
-            numberAnswer = state+1;
+        if (spState != null) {
+            int state = spState.getInt("state", 0);
+            AppData.questionNumber = state - 1;
+            numberAnswer = state + 1;
         }
 
         findViewById(R.id.iv_back).setOnClickListener(this);
@@ -94,6 +92,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         mPlan1 = findViewById(R.id.plan1);
         mPlan2 = findViewById(R.id.plan2);
 
+        mTvSuppost = findViewById(R.id.tv_suppost);
         mBtnNext = findViewById(R.id.btn_tiep);
         mBtnNext.setOnClickListener(this);
 
@@ -114,10 +113,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.txt_suggest).setOnClickListener(this);
 
 
-        SharedPreferences spCoin = getSharedPreferences(SHARED_PREFERENCES_COIN, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = spCoin.edit();
-//        mLvDrawable = (LevelListDrawable) mIvMusic.getDrawable();
-
         mTvNumberAnswer.setText(String.valueOf(numberAnswer));
         showInfor();
 
@@ -129,6 +124,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             appData.toNextQuestion();
             mIvPicture.setImageDrawable(appData.getImageDrawable());
             ArrayList<String> answer = appData.getShortAnswer();
+            suggest = appData.getSuggest();
+            Log.i(TAG, suggest);
             kq = appData.getKQ();
             size = answer.size();
             showAnswer(size);
@@ -156,7 +153,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             button.setTypeface(mTypeface);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 135);
             button.setLayoutParams(params);
-
             if (i < 8) {
                 mAnswer1.addView(button);
                 setvisible(button, mAnswer1);
@@ -183,7 +179,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     for (int i = 0; i < mPlan1.getChildCount(); i++) {
                         Button button1 = (Button) mPlan1.getChildAt(i);
                         findViewById(button1.getId());
-
                         if (bt == button1.getText()) {
                             button1.setVisibility(View.VISIBLE);
                         }
@@ -216,37 +211,31 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 135);
             button.setLayoutParams(params);
             if (i < 8) {
-
-                    mPlan1.addView(button);
-                    setinvisible(button);
-
+                mPlan1.addView(button);
+                setInvisible(button);
             } else {
-
-                    mPlan2.addView(button);
-                    setinvisible(button);
-
+                mPlan2.addView(button);
+                setInvisible(button);
             }
         }
     }
 
-    private Button setinvisible(final Button button) {
+
+    private Button setInvisible(final Button button) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 for (int i = 0; i < mAnswer1.getChildCount(); i++) {
                     Button button1 = (Button) mAnswer1.getChildAt(i);
                     if (button1.getText() == "") {
                         dapan = button.getText().toString();
                         button1.setText(dapan);
                         button.setVisibility(View.INVISIBLE);
-//                        checkAnswer(da, mAnswer1);
-                        if(i==(mAnswer1.getChildCount()-1)){
+                        if (i == (mAnswer1.getChildCount() - 1)) {
                             checkAnswer(mAnswer1);
                         }
                         return;
                     }
-
                 }
                 for (int i = 0; i < mAnswer2.getChildCount(); i++) {
                     Button button1 = (Button) mAnswer2.getChildAt(i);
@@ -254,51 +243,30 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                         dapan = button.getText().toString();
                         button1.setText(dapan);
                         button.setVisibility(View.INVISIBLE);
-//                        checkAnswer(da, mAnswer2);
-                        if(i==(mAnswer2.getChildCount()-1)){
+                        if (i == (mAnswer2.getChildCount() - 1)) {
                             checkAnswer(mAnswer2);
                         }
                         return;
                     }
                 }
-
             }
         });
         return button;
     }
 
+
     private void checkAnswer(LinearLayout answer) {
         //lay dap an
-        String da = "";
-        if(answer==mAnswer1){
-            for (int k = 0; k < answer.getChildCount(); k++) {
-                Button btn = (Button) answer.getChildAt(k);
-                String text = btn.getText().toString();
-                if (text != "") {
-                    da += text;
-                }
-            }
-        }else {
-//            Toast.makeText(this, "AS2", Toast.LENGTH_LONG).show();
-            for (int k = 0; k < mAnswer1.getChildCount(); k++) {
-                Button btn = (Button) mAnswer1.getChildAt(k);
-                String text = btn.getText().toString();
-                if (text != "") {
-                    da += text;
-                }
-            }
-            for (int k = 0; k < mAnswer2.getChildCount(); k++) {
-                Button btn = (Button) mAnswer2.getChildAt(k);
-                String text = btn.getText().toString();
-                if (text != "") {
-                    da += text;
-                }
-            }
-
+        StringBuilder da = new StringBuilder();
+        if (answer == mAnswer1) {
+            getAnswer(da, answer);
+        } else {
+            getAnswer(da, mAnswer1);
+            getAnswer(da, mAnswer2);
         }
         //check KQ
         if (da.length() == size) {
-            if (da.equals(kq)) {
+            if (da.toString().equals(kq)) {
                 Toast.makeText(this, "Thiên tài!!!", Toast.LENGTH_SHORT).show();
                 numberAnswer++;
                 point += 100;
@@ -308,7 +276,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
                 SharedPreferences spState = getSharedPreferences(SHARED_PREFERENCES_STATE, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = spState.edit();
-                editor.putInt("state",AppData.questionNumber+1);
+                editor.putInt("state", AppData.questionNumber + 1);
                 editor.apply();
 
             } else {
@@ -326,11 +294,22 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void getAnswer(StringBuilder da, LinearLayout answer) {
+        for (int k = 0; k < answer.getChildCount(); k++) {
+            Button btn = (Button) answer.getChildAt(k);
+            String text = btn.getText().toString();
+            if (!text.isEmpty()) {
+                da.append(text);
+            }
+        }
+    }
+
     private void newQuestion() {
         mAnswer1.removeAllViews();
         mAnswer2.removeAllViews();
         mPlan1.removeAllViews();
         mPlan2.removeAllViews();
+        mTvSuppost.setVisibility(View.INVISIBLE);
         mBtnNext.setVisibility(View.GONE);
         showInfor();
     }
@@ -351,8 +330,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 answerDialog.show();
                 break;
             case R.id.txt_suggest:
-                SupportDialog supportDialog = new SupportDialog(this);
-                supportDialog.show();
+                goToSupportDialog();
                 break;
             case R.id.txt_point:
                 ItemDialog itemDialog = new ItemDialog(this);
@@ -364,8 +342,75 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.iv_back:
                 onBackPressed();
                 break;
+            case R.id.fl_suppost_1:
+                showKyTu(0);
+                break;
+            case R.id.fl_suppost_2:
+                int indext = random.nextInt(size);
+                showKyTu(indext);
+                break;
+            case R.id.fl_suppost_3:
+                mTvSuppost.setText(suggest);
+                mTvSuppost.setTypeface(mTypeface);
+                break;
+            case R.id.fl_suppost_4:
+                hintKyTuSai();
+                break;
             default:
                 break;
+        }
+    }
+
+    // Make DialogSupport
+    private void goToSupportDialog() {
+        final SupportDialog supportDialog = new SupportDialog(this);
+        supportDialog.findViewById(R.id.fl_suppost_1).setOnClickListener(this);
+        supportDialog.findViewById(R.id.fl_suppost_2).setOnClickListener(this);
+        supportDialog.findViewById(R.id.fl_suppost_3).setOnClickListener(this);
+        supportDialog.findViewById(R.id.fl_suppost_4).setOnClickListener(this);
+        supportDialog.show();
+    }
+
+    private void hintKyTuSai() {
+            forHint(mPlan1);
+            forHint(mPlan2);
+    }
+    private void forHint(LinearLayout mPlan){
+        for (int k = 0; k < mPlan.getChildCount(); k++) {
+            Button button = (Button) mPlan.getChildAt(k);
+            button.setVisibility(View.INVISIBLE);
+            for (int i = 0; i < kq.length(); i++) {
+                String KyTuDau = String.valueOf(kq.charAt(i));
+                if (KyTuDau.equals(button.getText())) {
+                    button.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
+
+    private void showKyTu(int indext) {
+        for (int i = 0; i < kq.length(); i++) {
+            String KyTuDau = String.valueOf(kq.charAt(indext));
+            for (int k = 0; k < mAnswer1.getChildCount(); k++) {
+                Button button = (Button) mAnswer1.getChildAt(indext);
+                button.setText(KyTuDau);
+                button.setBackgroundResource(R.drawable.tile_hint);
+                button.setEnabled(false);
+                break;
+            }
+            forMplan(KyTuDau, mPlan1);
+            forMplan(KyTuDau, mPlan2);
+            break;
+        }
+    }
+
+    public void forMplan(String KyTuDau, LinearLayout mPlan) {
+        for (int k = 0; k < mPlan.getChildCount(); k++) {
+            Button button = (Button) mPlan.getChildAt(k);
+            if (KyTuDau.equals(button.getText())) {
+                button.setVisibility(View.INVISIBLE);
+                return;
+            }
         }
     }
 
