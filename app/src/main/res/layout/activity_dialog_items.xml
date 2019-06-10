@@ -38,7 +38,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="25dp"
                             android:gravity="center"
-                            android:text="Trợ giúp"
+                            android:text="Vật phẩm"
                             android:textColor="@color/colorWhile"
                             android:textSize="30dp" />
                     </LinearLayout>
@@ -50,6 +50,7 @@
                         android:padding="20dp">
 
                         <FrameLayout
+                            android:id="@+id/fm_freeMoney_x3"
                             android:layout_width="match_parent"
                             android:layout_height="60dp"
                             android:layout_marginTop="20dp"
@@ -74,6 +75,7 @@
                         </FrameLayout>
 
                         <FrameLayout
+                            android:id="@+id/fm_freeMoney_x10"
                             android:layout_width="match_parent"
                             android:layout_height="60dp"
                             android:layout_marginTop="10dp"
