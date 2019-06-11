@@ -36,9 +36,10 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private static final int LEVEL_MUSIC_ON = 0;
     private static final int LEVEL_MUSIC_OFF = 1;
     Random random = new Random();
+    private SupportDialog supportDialog;
     private String kq = "";
     private int size;
-    private int level;
+
     private int heart = 5;
     private int numberAnswer;
     private int point = 0;
@@ -52,6 +53,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private TextView mTvHeart, mTvNumberAnswer, mTvPoint;
     private TextView mTvSuppost;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,18 +61,14 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         mTypeface = Typeface.createFromAsset(getAssets(), "fonts/UTM_Cookies_0.ttf");
         initView();
         fullScreen();
-        ring();
-    }
-
-    private void ring() {
-        MediaPlayer ring = MediaPlayer.create(PlayActivity.this, R.raw.ring);
-        ring.start();
     }
 
     private void setIvMusic() {
-        level = mIvMusic.getDrawable().getLevel();
+        int level = mIvMusic.getDrawable().getLevel();
         mIvMusic.setImageLevel(level == LEVEL_MUSIC_ON
                 ? LEVEL_MUSIC_OFF : LEVEL_MUSIC_ON);
+        MediaPlayer ring = MediaPlayer.create(PlayActivity.this, R.raw.ring);
+        ring.start();
     }
 
     private void fullScreen() {
@@ -113,6 +111,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
         mTvNumberAnswer.setText(String.valueOf(numberAnswer));
         mTvPoint.setText(String.valueOf(point));
+
+        supportDialog = new SupportDialog(this);
         showInfor();
 
     }
@@ -334,7 +334,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         mAnswer2.removeAllViews();
         mPlan1.removeAllViews();
         mPlan2.removeAllViews();
-        mTvSuppost.setVisibility(View.INVISIBLE);
+        mTvSuppost.setText("");
         mBtnNext.setVisibility(View.GONE);
         showInfor();
     }
@@ -375,11 +375,11 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 showKyTu(indext);
                 break;
             case R.id.fl_suppost_3:
-                mTvSuppost.setText(suggest);
-                mTvSuppost.setTypeface(mTypeface);
+                support();
                 break;
             case R.id.fl_suppost_4:
                 hintKyTuSai();
+
                 break;
             case R.id.fm_freeMoney_x3:
                 point += 5;
@@ -396,6 +396,21 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
+    private void support() {
+        if (point > 0) {
+            point -= 20;
+            mTvPoint.setText(String.valueOf(point));
+            mTvSuppost.setText(suggest);
+            mTvSuppost.setTypeface(mTypeface);
+            supportDialog.cancel();
+            checkAnswer(mAnswer1);
+            checkAnswer(mAnswer2);
+        } else {
+            Toast.makeText(this, "Bạn k đủ tiền!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void goToItemDialog() {
         ItemDialog itemDialog = new ItemDialog(this);
         itemDialog.findViewById(R.id.fm_freeMoney_x3).setOnClickListener(this);
@@ -406,29 +421,31 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     // Make DialogSupport
     private void goToSupportDialog() {
-        final SupportDialog supportDialog = new SupportDialog(this);
         supportDialog.findViewById(R.id.fl_suppost_1).setOnClickListener(this);
         supportDialog.findViewById(R.id.fl_suppost_2).setOnClickListener(this);
         supportDialog.findViewById(R.id.fl_suppost_3).setOnClickListener(this);
         supportDialog.findViewById(R.id.fl_suppost_4).setOnClickListener(this);
         supportDialog.show();
+
     }
 
     private void hintKyTuSai() {
-
         if (point > 0) {
             point -= 20;
             mTvPoint.setText(String.valueOf(point));
+            saveDataPoint();
+
+            forHint(mPlan1);
+            forHint(mPlan2);
+            checkAnswer(mAnswer1);
+            checkAnswer(mAnswer2);
+            supportDialog.cancel();
 
         } else {
             Toast.makeText(this, "Bạn k đủ tiền!", Toast.LENGTH_SHORT).show();
             mTvSuppost.setEnabled(false);
         }
 
-
-        saveDataPoint();
-        forHint(mPlan1);
-        forHint(mPlan2);
     }
 
     private void saveDataPoint() {
@@ -436,6 +453,34 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences.Editor editor1 = spCoin.edit();
         editor1.putInt("coin", point);
         editor1.apply();
+    }
+
+
+    private void showKyTu(int indext) {
+        for (int i = 0; i < kq.length(); i++) {
+            String KyTuDau = String.valueOf(kq.charAt(indext));
+            if (point > 0) {
+                point -= 5;
+                mTvPoint.setText(String.valueOf(point));
+
+                for (int k = 0; k < mAnswer1.getChildCount(); k++) {
+                    Button button = (Button) mAnswer1.getChildAt(indext);
+                    button.setText(KyTuDau);
+//                    button.setBackgroundResource(R.drawable.tile_hint);
+                    button.setEnabled(false);
+                    break;
+                }
+                forMplan(KyTuDau, mPlan1);
+                forMplan(KyTuDau, mPlan2);
+                checkAnswer(mAnswer1);
+                checkAnswer(mAnswer2);
+                supportDialog.cancel();
+
+            } else {
+                Toast.makeText(this, "Bạn không đủ tiền để mở gợi ý", Toast.LENGTH_SHORT).show();
+            }
+            break;
+        }
     }
 
     private void forHint(LinearLayout mPlan) {
@@ -448,29 +493,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     button.setVisibility(View.VISIBLE);
                 }
             }
-        }
-    }
-
-    private void showKyTu(int indext) {
-        for (int i = 0; i < kq.length(); i++) {
-            String KyTuDau = String.valueOf(kq.charAt(indext));
-            for (int k = 0; k < mAnswer1.getChildCount(); k++) {
-                Button button = (Button) mAnswer1.getChildAt(indext);
-                button.setText(KyTuDau);
-                button.setBackgroundResource(R.drawable.tile_hint);
-                button.setEnabled(false);
-                if (point > 0) {
-                    point -= 5;
-                    mTvPoint.setText(String.valueOf(point));
-
-                } else {
-                    Toast.makeText(this, "Bạn không đủ tiền để mở gợi ý", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            }
-            forMplan(KyTuDau, mPlan1);
-            forMplan(KyTuDau, mPlan2);
-            break;
         }
     }
 
