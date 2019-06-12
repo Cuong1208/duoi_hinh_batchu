@@ -153,7 +153,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             // Hiển thị 16 ký tự
             Collections.shuffle(answer);
             viewAnswer(answer);
-            Toast.makeText(this, appData.getSuggest(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, appData.getSuggest(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -407,7 +407,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             checkAnswer(mAnswer1);
             checkAnswer(mAnswer2);
         } else {
-            Toast.makeText(this, "Bạn k đủ tiền!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Bạn không đủ tiền!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -442,7 +442,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             supportDialog.cancel();
 
         } else {
-            Toast.makeText(this, "Bạn k đủ tiền!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Bạn không đủ tiền!", Toast.LENGTH_SHORT).show();
             mTvSuppost.setEnabled(false);
         }
 
