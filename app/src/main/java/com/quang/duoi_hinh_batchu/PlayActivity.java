@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.quang.duoi_hinh_batchu.dialog.AnswerDialog;
 import com.quang.duoi_hinh_batchu.dialog.ItemDialog;
+import com.quang.duoi_hinh_batchu.dialog.ItemHeartDialog;
 import com.quang.duoi_hinh_batchu.dialog.SupportDialog;
 import com.quang.duoi_hinh_batchu.dialog.UserDialog;
 import com.quang.duoi_hinh_batchu.module.AppData;
@@ -92,7 +93,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         mBtnNext = findViewById(R.id.btn_tiep);
         mBtnNext.setOnClickListener(this);
 
-        mTvHeart = findViewById(R.id.txt_heart);
+        mTvHeart = findViewById(R.id.mTv_heart);
         mTvHeart.setText(String.valueOf(heart));
 
         mTvPoint = findViewById(R.id.txt_point);
@@ -105,12 +106,13 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.btn_tiep).setOnClickListener(this);
         findViewById(R.id.fm_user).setOnClickListener(this);
-        findViewById(R.id.txt_heart).setOnClickListener(this);
+        findViewById(R.id.mTv_heart).setOnClickListener(this);
         findViewById(R.id.txt_suggest).setOnClickListener(this);
 
 
         mTvNumberAnswer.setText(String.valueOf(numberAnswer));
         mTvPoint.setText(String.valueOf(point));
+
 
         supportDialog = new SupportDialog(this);
         showInfor();
@@ -129,6 +131,14 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         if (spCoin != null) {
             int coin = spCoin.getInt("coin", 0);
             point = coin;
+        }
+
+        SharedPreferences spHeart = getSharedPreferences(SHARED_PREFERENCES_HEART, Context.MODE_PRIVATE);
+        if (spHeart != null) {
+            int heartttt = spHeart.getInt("heart", 5);
+            heart = heartttt;
+
+
         }
 
     }
@@ -297,13 +307,28 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     Button button1 = (Button) answer.getChildAt(i);
                     button1.setBackgroundResource(R.drawable.tile_false);
                 }
-                heart--;
+                heart -= 1;
                 mTvHeart.setText(String.valueOf(heart));
-                if (heart == 0) {
+                saveDataHeart();
+
+                if (heart <= 0) {
+//                    heart = 0;
+//                    mTvHeart.setText(String.valueOf(heart));
                     Toast.makeText(this, "Game Over", Toast.LENGTH_SHORT).show();
+                    goToItemHeartDialog();
                 }
             }
         }
+    }
+
+    private void saveDataHeart() {
+        SharedPreferences spHeart = getSharedPreferences(SHARED_PREFERENCES_HEART, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editorrrr = spHeart.edit();
+        if (heart >= 0) {
+            editorrrr.putInt("heart", heart);
+            editorrrr.apply();
+        }
+
     }
 
     private void saveData() {
@@ -316,6 +341,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences.Editor editor1 = spCoin.edit();
         editor1.putInt("coin", point);
         editor1.apply();
+
 
     }
 
@@ -350,7 +376,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 UserDialog userDialog = new UserDialog(this);
                 userDialog.show();
                 break;
-            case R.id.txt_heart:
+            case R.id.mTv_heart:
                 AnswerDialog answerDialog = new AnswerDialog(this);
                 answerDialog.show();
                 break;
@@ -359,7 +385,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.txt_point:
                 goToItemDialog();
-
                 break;
             case R.id.iv_music:
                 setIvMusic();
@@ -379,7 +404,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.fl_suppost_4:
                 hintKyTuSai();
-
                 break;
             case R.id.fm_freeMoney_x3:
                 point += 5;
@@ -391,6 +415,9 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 mTvPoint.setText(String.valueOf(point));
                 saveDataPoint();
                 break;
+            case R.id.fm_freeHeart_x1:
+                heart += 1;
+                mTvHeart.setText(String.valueOf(heart));
             default:
                 break;
         }
@@ -398,8 +425,9 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void support() {
-        if (point > 0) {
+        if (point > 0 ) {
             point -= 20;
+
             mTvPoint.setText(String.valueOf(point));
             mTvSuppost.setText(suggest);
             mTvSuppost.setTypeface(mTypeface);
@@ -409,6 +437,12 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             Toast.makeText(this, "Bạn không đủ tiền!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void goToItemHeartDialog() {
+        ItemHeartDialog itemHeartDialog = new ItemHeartDialog(this);
+        itemHeartDialog.findViewById(R.id.fm_freeHeart_x1).setOnClickListener(this);
+        itemHeartDialog.show();
     }
 
     private void goToItemDialog() {
@@ -451,36 +485,42 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private void saveDataPoint() {
         SharedPreferences spCoin = getSharedPreferences(SHARED_PREFERENCES_COIN, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor1 = spCoin.edit();
-        editor1.putInt("coin", point);
-        editor1.apply();
+        if (point >= 0) {
+            editor1.putInt("coin", point);
+            editor1.apply();
+        }
+
     }
 
 
     private void showKyTu(int indext) {
-        for (int i = 0; i < kq.length(); i++) {
-            String KyTuDau = String.valueOf(kq.charAt(indext));
-            if (point > 0) {
-                point -= 5;
-                mTvPoint.setText(String.valueOf(point));
-
-                for (int k = 0; k < mAnswer1.getChildCount(); k++) {
-                    Button button = (Button) mAnswer1.getChildAt(indext);
-                    button.setText(KyTuDau);
+        try {
+            for (int i = 0; i < kq.length(); i++) {
+                String KyTuDau = String.valueOf(kq.charAt(indext));
+                if (point > 0) {
+                    point -= 5;
+                    mTvPoint.setText(String.valueOf(point));
+                    for (int k = 0; k < mAnswer1.getChildCount(); k++) {
+                        Button button = (Button) mAnswer1.getChildAt(indext);
+                        button.setText(KyTuDau);
 //                    button.setBackgroundResource(R.drawable.tile_hint);
-                    button.setEnabled(false);
-                    break;
+                        button.setEnabled(false);
+                        break;
+                    }
+                    forMplan(KyTuDau, mPlan1);
+                    forMplan(KyTuDau, mPlan2);
+                    checkAnswer(mAnswer1);
+                    checkAnswer(mAnswer2);
+                    supportDialog.cancel();
+                } else {
+                    Toast.makeText(this, "Bạn không đủ tiền để mở gợi ý", Toast.LENGTH_SHORT).show();
                 }
-                forMplan(KyTuDau, mPlan1);
-                forMplan(KyTuDau, mPlan2);
-                checkAnswer(mAnswer1);
-                checkAnswer(mAnswer2);
-                supportDialog.cancel();
-
-            } else {
-                Toast.makeText(this, "Bạn không đủ tiền để mở gợi ý", Toast.LENGTH_SHORT).show();
+                break;
             }
-            break;
+        } catch (Exception e) {
+            Log.i(TAG, "Exception : " + e);
         }
+
     }
 
     private void forHint(LinearLayout mPlan) {
